@@ -1,0 +1,12 @@
+# Ollama API configuration
+OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"  # Default Ollama API URL
+MODEL_NAME = "YOUR_MODEL_NAME"  # e.g., "deepseek-r1:1.5b"
+
+# Speech configuration
+LANGUAGE = "en-US"  # Default language
+WAKE_WORD = "jarvis"  # Default wake word
+
+# Voice configuration
+RATE = 150  # Speech rate
+VOLUME = 1.0  # Volume level (0.0 to 1.0)
+VOICE_ID = 0  # 0 for male, 1 for female 

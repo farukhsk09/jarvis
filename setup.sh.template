@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Ensure we're in the jarvis directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR"
+
+# Check if python3 is installed
+if ! command -v python3 &> /dev/null; then
+    echo "Python3 is not installed. Please install Python3 first."
+    exit 1
+fi
+
+# Create required directories
+mkdir -p resources/input resources/output resources/temp
+
+# Detect OS and install required system dependencies
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    echo "Installing system dependencies for macOS..."
+    echo "Please install Homebrew if not already installed:"
+    echo "/bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+    echo "Then run:"
+    echo "brew install python@3.10 portaudio flac ffmpeg"
+    echo "brew install pyaudio"
+    
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux
+    echo "Installing system dependencies for Linux..."
+    echo "For Debian/Ubuntu:"
+    echo "sudo apt-get update"
+    echo "sudo apt-get install -y python3-dev portaudio19-dev python3-pyaudio ffmpeg"
+    echo ""
+    echo "For Fedora:"
+    echo "sudo dnf install -y portaudio-devel python3-pyaudio ffmpeg"
+    echo ""
+    echo "For Arch Linux:"
+    echo "sudo pacman -S portaudio python-pyaudio ffmpeg"
+fi
+
+echo "After installing system dependencies, proceed with Python setup:"
+echo ""
+echo "1. Create and activate virtual environment:"
+echo "python3 -m venv venv"
+echo "source venv/bin/activate"
+echo ""
+echo "2. Install Python dependencies:"
+echo "pip install -r requirements.txt"
+echo ""
+echo "3. Copy config template and edit with your settings:"
+echo "cp config.py.template config.py"
+echo "# Edit config.py with your preferred settings"
+echo ""
+echo "4. Run the assistant:"
+echo "python main.py" 
