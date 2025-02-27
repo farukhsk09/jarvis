@@ -2,7 +2,7 @@ import requests
 import json
 import time
 import sys
-from config import OLLAMA_API_URL, MODEL_NAME
+from config_local import OLLAMA_API_URL, MODEL_NAME
 
 class LLMHandler:
     def __init__(self):

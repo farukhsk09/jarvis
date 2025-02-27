@@ -5,7 +5,7 @@ from src.llm_handler import LLMHandler
 import time
 from pathlib import Path
 import logging
-from config import WAKE_WORD
+from config_local import WAKE_WORD
 
 # Setup logging
 logging.basicConfig(
@@ -84,9 +84,11 @@ def process_audio_file(audio_file):
             qa_pairs.append(qa_pair)
 
     if qa_pairs:
-        # Save text output
+        # Generate timestamp for this conversation
         timestamp = time.strftime("%Y%m%d_%H%M%S")
-        text_filename = f"qa_session_{timestamp}.txt"
+        
+        # Save conversation text
+        text_filename = f"conversation_{timestamp}.md"
         file_handler.save_qa_text(qa_pairs, text_filename)
 
         # Format audio text with proper spacing and punctuation
@@ -105,17 +107,30 @@ def process_audio_file(audio_file):
         # Split into chunks if necessary
         chunks = chunk_text(full_audio_text)
         
-        # Process each chunk
+        # Process each chunk and keep track of audio files
+        audio_files = []
         for chunk_idx, chunk in enumerate(chunks, 1):
             chunk_filename = f"qa_session_{timestamp}_part{chunk_idx}.mp3"
+            audio_path = file_handler.get_audio_path(chunk_filename)
             logger.info(f"Converting chunk {chunk_idx}/{len(chunks)} to speech ({len(chunk.split())} words)")
-            audio_proc.text_to_speech(chunk, chunk_filename)
+            audio_proc.text_to_speech(chunk, str(audio_path))
+            audio_files.append(chunk_filename)
+        
+        # Save metadata for this conversation
+        file_handler.save_conversation_metadata(
+            original_audio=audio_file,
+            qa_pairs=qa_pairs,
+            audio_files=audio_files,
+            timestamp=timestamp
+        )
         
         logger.info(f"Completed processing {audio_file} - Generated {len(chunks)} audio files")
+        logger.info(f"Conversation saved in resources/output/text/{text_filename}")
+        logger.info(f"Audio files saved in resources/output/audio/")
 
 def main():
     # Create required directories
-    for dir_path in ['resources/input', 'resources/output', 'resources/temp']:
+    for dir_path in ['resources/input', 'resources/output/text', 'resources/output/audio', 'resources/temp']:
         Path(dir_path).mkdir(parents=True, exist_ok=True)
     
     input_dir = Path('resources/input')
